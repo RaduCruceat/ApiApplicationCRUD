@@ -1,58 +1,57 @@
-﻿using ApiApplication.Entities;
+﻿using ApiApplication.Data.Entities;
 using ApiApplication.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiApplication.Controllers
+namespace ApiApplication.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class CarsController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class CarsController : ControllerBase
+    
+
+    private readonly ILogger<CarsController> _logger;
+    private readonly ICarService _carService;
+
+    public CarsController(ILogger<CarsController> logger,ICarService carService)
     {
-        private static readonly List<Car> Cars = new List<Car>
-        {
-           new Car{ 
-               Id=1,
-               Marca="a",
-               Model="a",
-               Motor=3000,
-               An=1000,
-           },           
-            new Car{
-               Id=2,
-               Marca="b",
-               Model="b",
-               Motor=4000,
-               An=15000,
-            },
-             new Car{
-               Id=3,
-               Marca="c",
-               Model="c",
-               Motor=5000,
-               An=17000,
-             },
-              new Car{
-               Id=4,
-               Marca="as",
-               Model="bss",
-               Motor=5000,
-               An=15000}
-        };
-
-        private readonly ILogger<CarsController> _logger;
-        private readonly ICarService _carService;
-
-        public CarsController(ILogger<CarsController> logger,ICarService carService)
-        {
-            _logger = logger;
-            _carService = carService;
-        }
-
-        [HttpGet(Name = "GetCars")]
-        public IEnumerable<Car> Get()
-        {
-            return _carService.GetCars();
-
-        }
+        _logger = logger;
+        _carService = carService;
     }
+
+    [HttpGet(Name = "GetCars")]
+    public IEnumerable<Car> GetCars()
+    {
+        return _carService.GetCars();
+    }
+
+    [HttpGet("{id}", Name = "GetCarById")]
+    public Car GetCarById(int id)
+    {
+        return _carService.GetCarById(id);
+    }
+
+    [HttpPost(Name = "AddCar")]
+    public Car AddCar([FromBody] Car car)
+    {
+        return _carService.AddCar(car);
+    }
+
+    [HttpDelete(Name = "DeleteCar")]
+    public Car DeleteCar(int id)
+    {
+        return _carService.DeleteCar(id);
+    }
+
+    [HttpPut("{id}", Name = "EditCar")]
+    public Car EditCar(int id, Car car)
+    {
+        car.Id = id;
+        return _carService.UpdateCar(id, car);
+    }
+
+
+
+
+
 }

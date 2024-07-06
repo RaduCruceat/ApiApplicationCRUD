@@ -1,3 +1,7 @@
+using ApiApplication.Data.Context;
+using ApiApplication.Data.Repositories;
+using ApiApplication.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +10,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<ICarService, CarService>();
+
+builder.Services.AddScoped<ICarRepository, CarRepository>();
+
+builder.Services.AddScoped<CarContext, CarContext>();
 
 var app = builder.Build();
 
