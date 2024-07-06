@@ -1,12 +1,12 @@
-﻿using ApiApplication.Data.Entities;
+﻿using ApiApplication.Services.Dtos;
 
 namespace ApiApplication.Services;
 
 public interface ICarService
 {
-    public List<Car> GetCars();
-    public Car GetCarById(int carId);       
-    public Car AddCar(Car car);  
-    public Car UpdateCar(int carId,Car car);
-    public Car DeleteCar(int carId);
+    public List<CarDto> GetCars();
+    public CarDto GetCarById(int carId);       
+    public CarDto AddCar(CarDto car);  
+    public CarDto UpdateCar(int carId, CarDto car);
+    public CarDto DeleteCar(int carId);
 }

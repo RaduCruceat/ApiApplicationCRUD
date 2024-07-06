@@ -12,7 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ICarService, CarService>();
-
+//trb citita variabila din appsettings.json folosind iconfiguration ca in context 
+//in functie de variabila se face cu dapper sau carRepository 
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 
 builder.Services.AddScoped<CarContext, CarContext>();
@@ -25,6 +26,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.UseHttpsRedirection();
 

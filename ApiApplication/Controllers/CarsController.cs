@@ -1,6 +1,7 @@
-﻿using ApiApplication.Data.Entities;
-using ApiApplication.Services;
+﻿using ApiApplication.Services;
+using ApiApplication.Services.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ApiApplication.Controllers;
 
@@ -8,50 +9,52 @@ namespace ApiApplication.Controllers;
 [Route("[controller]")]
 public class CarsController : ControllerBase
 {
-    
-
-    private readonly ILogger<CarsController> _logger;
+   
     private readonly ICarService _carService;
 
-    public CarsController(ILogger<CarsController> logger,ICarService carService)
+    public CarsController(ICarService carService)
     {
-        _logger = logger;
         _carService = carService;
     }
 
     [HttpGet(Name = "GetCars")]
-    public IEnumerable<Car> GetCars()
+    public IEnumerable<CarDto> GetCars()
     {
         return _carService.GetCars();
     }
 
     [HttpGet("{id}", Name = "GetCarById")]
-    public Car GetCarById(int id)
+    public CarDto GetCarById(int id)
     {
         return _carService.GetCarById(id);
     }
 
     [HttpPost(Name = "AddCar")]
-    public Car AddCar([FromBody] Car car)
+    public CarDto AddCar([FromBody] CarDto car)
     {
         return _carService.AddCar(car);
     }
 
     [HttpDelete(Name = "DeleteCar")]
-    public Car DeleteCar(int id)
+    public CarDto DeleteCar(int id)
     {
+
         return _carService.DeleteCar(id);
     }
 
     [HttpPut("{id}", Name = "EditCar")]
-    public Car EditCar(int id, Car car)
-    {
-        car.Id = id;
-        return _carService.UpdateCar(id, car);
+    public ActionResult <CarDto> EditCar(int id, CarDto car)
+    { 
+        
+        if (id < 0)
+            return BadRequest("id<0");
+        if (car.Model.IsNullOrEmpty()|| car.Marca.IsNullOrEmpty()||car.An>DateTime.Now.Year||car.Motor==0)
+        {
+            return BadRequest("Car not found");
+        }
+        var updatedCar = _carService.UpdateCar(id, car);
+        return Ok(updatedCar); 
+            
     }
-
-
-
-
 
 }

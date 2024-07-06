@@ -1,6 +1,6 @@
 ﻿using ApiApplication.Data.Entities;
 using ApiApplication.Data.Repositories;
-using System.Runtime.CompilerServices;
+using ApiApplication.Services.Dtos;
 
 namespace ApiApplication.Services;
 
@@ -11,30 +11,61 @@ public class CarService:ICarService
     {
         _carRepository = carRepository;
     }
-    public List<Car> GetCars() 
+    public List<CarDto> GetCars()
     {
-        return _carRepository.GetCars();
+        var cars = _carRepository.GetCars();
+        var carsDto = cars.Select(car => MapCarToCarDto(car)).ToList();
+        return carsDto;
     }
 
-    public Car GetCarById(int carId)
+    public CarDto GetCarById(int carId)
     {
-        return _carRepository.GetCarById(carId);    
+        var car= _carRepository.GetCarById(carId);
+        var carDto = MapCarToCarDto(car);
+        return carDto;
     }
 
-    public Car AddCar(Car car)
+    public CarDto AddCar(CarDto carDto)
     {
-        return _carRepository.AddCar(car);
+        var car=MapCarDtoToCar(carDto);
+        var addedCar=_carRepository.AddCar(car);
+        return MapCarToCarDto(addedCar);
+
     }
 
-    public Car UpdateCar(int carId,Car car)
+    public CarDto UpdateCar(int carId, CarDto carDto)
     {
-        return _carRepository.UpdateCar(carId,car); 
+        var car = MapCarDtoToCar(carDto);
+        car.Id=carId; 
+        var updatedCar = _carRepository.UpdateCar(carId, car);
+        return MapCarToCarDto(updatedCar);
     }
 
-    public Car DeleteCar(int carId)
+    public CarDto DeleteCar(int carId)
     {
-        return _carRepository.DeleteCar (carId);
+        var car = _carRepository.DeleteCar(carId);
+        return MapCarToCarDto(car);
+    }
+    private Car MapCarDtoToCar(CarDto carDto)
+    {
+        return new Car
+        {
+            An = carDto.An,
+            Model = carDto.Model,
+            Motor = carDto.Motor,
+            Marca = carDto.Marca
+        };
+    }
+    private CarDto MapCarToCarDto(Car car)
+    {
+        return new CarDto
+        {
+            An = car.An,
+            Model = car.Model,
+            Motor = car.Motor,
+            Marca = car.Marca
+        };
     }
 
-   
+
 }
