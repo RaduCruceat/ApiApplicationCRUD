@@ -1,7 +1,7 @@
 ﻿using ApiApplication.Services;
 using ApiApplication.Services.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+
 
 namespace ApiApplication.Controllers;
 
@@ -9,7 +9,7 @@ namespace ApiApplication.Controllers;
 [Route("[controller]")]
 public class CarsController : ControllerBase
 {
-   
+
     private readonly ICarService _carService;
 
     public CarsController(ICarService carService)
@@ -18,43 +18,82 @@ public class CarsController : ControllerBase
     }
 
     [HttpGet(Name = "GetCars")]
-    public IEnumerable<CarDto> GetCars()
+    public ActionResult<IEnumerable<CarDto>> GetCars()
     {
-        return _carService.GetCars();
+        try
+        {
+            var cars = _carService.GetCars();
+            return Ok(cars);
+        }
+        catch (FluentValidation.ValidationException e)
+        {
+            return BadRequest(e.Errors);
+        }
     }
 
     [HttpGet("{id}", Name = "GetCarById")]
-    public CarDto GetCarById(int id)
+    public ActionResult<CarDto> GetCarById(int id)
     {
-        return _carService.GetCarById(id);
+        if (id < 0)
+            return BadRequest("Id < 0 (GetCarById)");
+        try
+        {
+            var retrievedCar = _carService.GetCarById(id);
+            return Ok(retrievedCar);
+        }
+        catch (FluentValidation.ValidationException e)
+        {
+            return BadRequest(e.Errors);
+        }
     }
 
     [HttpPost(Name = "AddCar")]
-    public CarDto AddCar([FromBody] CarDto car)
+    public ActionResult<CarDto> AddCar([FromBody] CarDto car)
     {
-        return _carService.AddCar(car);
+        try
+        {
+            var addedCar = _carService.AddCar(car);
+            return Ok(addedCar);
+        }
+        catch (FluentValidation.ValidationException e)
+        {
+            return BadRequest(e.Errors);
+        }
     }
 
-    [HttpDelete(Name = "DeleteCar")]
-    public CarDto DeleteCar(int id)
+    [HttpDelete("{id}", Name = "DeleteCar")]
+    public ActionResult<CarDto> DeleteCar(int id)
     {
+        if (id < 0)
+            return BadRequest("Id<0 (DeleteCar)");
+        try
+        {
+            var deletedCar = _carService.DeleteCar(id);
+            return Ok(deletedCar);
+        }
+        catch (FluentValidation.ValidationException e)
+        {
+            return BadRequest(e.Errors);
+        }
 
-        return _carService.DeleteCar(id);
     }
 
     [HttpPut("{id}", Name = "EditCar")]
-    public ActionResult <CarDto> EditCar(int id, CarDto car)
-    { 
-        
-        if (id < 0)
-            return BadRequest("id<0");
-        if (car.Model.IsNullOrEmpty()|| car.Marca.IsNullOrEmpty()||car.An>DateTime.Now.Year||car.Motor==0)
-        {
-            return BadRequest("Car not found");
-        }
-        var updatedCar = _carService.UpdateCar(id, car);
-        return Ok(updatedCar); 
-            
-    }
+    public ActionResult<CarDto> EditCar(int id, CarDto car)
+    {
 
+        if (id < 0)
+            return BadRequest("Id<0 (EditCar)");
+        try
+        {
+            var updatedCar = _carService.UpdateCar(id, car);
+            return Ok(updatedCar);
+        }
+        catch (FluentValidation.ValidationException e)
+        {
+            return BadRequest(e.Errors);
+
+        }
+
+    }
 }
