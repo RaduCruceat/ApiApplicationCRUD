@@ -37,6 +37,10 @@ public class CarRepository : ICarRepository
     {
         return _context.Cars.Find(carId);
     }
+    public async Task<Car> GetCarByIdAsync(int carId)
+    {
+        return await _context.Cars.FindAsync(carId);
+    }
 
     public List<Car> GetCars()
     {

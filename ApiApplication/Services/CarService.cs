@@ -1,16 +1,27 @@
 ﻿using ApiApplication.Data.Entities;
 using ApiApplication.Data.Repositories;
 using ApiApplication.Services.Dtos;
+using ApiApplication.Validators;
+using FluentValidation;
 
 namespace ApiApplication.Services;
 
 public class CarService:ICarService
 {
     private readonly ICarRepository _carRepository;
-    public CarService(ICarRepository carRepository)
+    private readonly CarIdValidator _carIdValidator;
+    private readonly CreateCarValidator _createCarValidator;
+    private readonly UpdateCarValidator _updateCarValidator;
+    private readonly DeleteCarValidator _deleteCarValidator;
+    public CarService(ICarRepository carRepository, CarIdValidator carIdValidator, CreateCarValidator createCarValidator, UpdateCarValidator updateCarValidator, DeleteCarValidator deleteCarValidator)
     {
         _carRepository = carRepository;
+        _carIdValidator = carIdValidator;
+        _createCarValidator = createCarValidator;
+        _updateCarValidator = updateCarValidator;
+        _deleteCarValidator = deleteCarValidator;
     }
+
     public List<CarDto> GetCars()
     {
         var cars = _carRepository.GetCars();
@@ -20,29 +31,52 @@ public class CarService:ICarService
 
     public CarDto GetCarById(int carId)
     {
-        var car= _carRepository.GetCarById(carId);
-        var carDto = MapCarToCarDto(car);
-        return carDto;
+        var validationResult = _carIdValidator.Validate(carId);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
+        var car = _carRepository.GetCarById(carId);
+        return MapCarToCarDto(car);
     }
 
     public CarDto AddCar(CarDto carDto)
     {
-        var car=MapCarDtoToCar(carDto);
-        var addedCar=_carRepository.AddCar(car);
+        var validationResult = _createCarValidator.Validate(carDto);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
+        var car = MapCarDtoToCar(carDto);
+        var addedCar = _carRepository.AddCar(car);
         return MapCarToCarDto(addedCar);
 
     }
 
     public CarDto UpdateCar(int carId, CarDto carDto)
     {
+        var validationResult = _updateCarValidator.Validate((carId, carDto));
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
         var car = MapCarDtoToCar(carDto);
-        car.Id=carId; 
+        car.Id = carId;
         var updatedCar = _carRepository.UpdateCar(carId, car);
         return MapCarToCarDto(updatedCar);
     }
 
     public CarDto DeleteCar(int carId)
     {
+         var validationResult = _carIdValidator.Validate(carId);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
         var car = _carRepository.DeleteCar(carId);
         return MapCarToCarDto(car);
     }
