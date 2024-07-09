@@ -2,6 +2,7 @@
 using Dapper;
 using System.Collections.Generic;
 using System.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ApiApplication.Data.Repositories
 {
@@ -55,10 +56,12 @@ namespace ApiApplication.Data.Repositories
 
         public Car DeleteCar(int carId)
         {
-            string query = "DELETE FROM Cars WHERE Id = @Id";
+            string selectQuery = "SELECT * FROM Cars WHERE Id = @Id";
+            var selectedCar= _dbConnection.QueryFirstOrDefault<Car>(selectQuery, new { Id = carId }); 
+            string deleteQuery = "DELETE FROM Cars WHERE Id = @Id";
             var parameters = new { Id = carId };
-            var car = _dbConnection.QueryFirstOrDefault<Car>(query, parameters);
-             return car;
+            var car = _dbConnection.QueryFirstOrDefault<Car>(deleteQuery, parameters);
+             return selectedCar;
         }
     }
 }
