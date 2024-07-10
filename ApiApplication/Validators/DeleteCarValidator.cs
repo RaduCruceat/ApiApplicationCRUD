@@ -18,7 +18,7 @@ namespace ApiApplication.Validators
 
         private bool CarExists(int carId)
         {
-            var car = _carRepository.GetCarById(carId); // Use .Result to wait synchronously
+            var car = _carRepository.GetCarById(carId);
             return car != null;
         }
     }

@@ -33,7 +33,7 @@ namespace ApiApplication.Data.Repositories
                              VALUES (@Marca, @Model, @An, @Motor);
                              SELECT CAST(SCOPE_IDENTITY() as int)";
             int id = _dbConnection.ExecuteScalar<int>(query, car);
-            car.Id = id; // Assign the generated ID back to the Car object
+            car.Id = id; 
             return car;
         }
 

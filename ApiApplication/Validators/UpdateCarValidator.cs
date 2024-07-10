@@ -14,5 +14,6 @@ namespace ApiApplication.Validators
             RuleFor(tuple => tuple.Item2.Marca).NotEmpty();
         }
 
+
     }
 }
