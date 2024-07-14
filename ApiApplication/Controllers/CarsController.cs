@@ -2,14 +2,12 @@
 using ApiApplication.Services.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
-
 namespace ApiApplication.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class CarsController : ControllerBase
 {
-
     private readonly ICarService _carService;
 
     public CarsController(ICarService carService)
@@ -17,7 +15,7 @@ public class CarsController : ControllerBase
         _carService = carService;
     }
 
-    [HttpGet(Name = "GetCars")]
+    [HttpGet("GetCars", Name = "GetCars")]
     public ActionResult<IEnumerable<CarDto>> GetCars()
     {
         try
@@ -31,7 +29,7 @@ public class CarsController : ControllerBase
         }
     }
 
-    [HttpGet("{id}", Name = "GetCarById")]
+    [HttpGet("GetCar/{id}", Name = "GetCarById")]
     public ActionResult<CarDto> GetCarById(int id)
     {
         if (id < 0)
@@ -47,7 +45,7 @@ public class CarsController : ControllerBase
         }
     }
 
-    [HttpPost(Name = "AddCar")]
+    [HttpPost("CreateCar", Name = "AddCar")]
     public ActionResult<CarDto> AddCar([FromBody] CarDto car)
     {
         try
@@ -61,7 +59,7 @@ public class CarsController : ControllerBase
         }
     }
 
-    [HttpDelete("{id}", Name = "DeleteCar")]
+    [HttpDelete("DeleteCar/{id}", Name = "DeleteCar")]
     public ActionResult<CarDto> DeleteCar(int id)
     {
         if (id < 0)
@@ -75,13 +73,11 @@ public class CarsController : ControllerBase
         {
             return BadRequest(e.Errors);
         }
-
     }
 
-    [HttpPut("{id}", Name = "EditCar")]
+    [HttpPut("EditCar/{id}", Name = "EditCar")]
     public ActionResult<CarDto> EditCar(int id, CarDto car)
     {
-
         if (id < 0)
             return BadRequest("Id<0 (EditCar)");
         try
@@ -92,8 +88,6 @@ public class CarsController : ControllerBase
         catch (FluentValidation.ValidationException e)
         {
             return BadRequest(e.Errors);
-
         }
-
     }
 }
